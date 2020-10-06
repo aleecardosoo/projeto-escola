@@ -1,38 +1,48 @@
-﻿using projeto_escola.Context;
+﻿using Microsoft.Extensions.Logging;
+using projeto_escola.Context;
 using projeto_escola.DTO;
 using projeto_escola.Model;
+using Serilog.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ILogger = Serilog.ILogger;
 
 namespace projeto_escola.Service.Impl
 {
     public class AlunoServiceImpl : IAlunoService
     {
+        AlunoContext context = new AlunoContext();
+
         public void add(Aluno aluno)
         {
-            throw new NotImplementedException();
+            context.Add<Aluno>(aluno);
+            context.SaveChanges();
         }
 
-        public void delete(long id)
+        public void delete(int id)
         {
-            throw new NotImplementedException();
+            Aluno aluno = context.Find<Aluno>(id);
+            context.Remove<Aluno>(aluno);
+            context.SaveChanges();
         }
 
-        public AlunoDTO find(long id)
+        public Aluno find(int id)
         {
-            throw new NotImplementedException();
+            return context.Find<Aluno>(id);
         }
 
-        public IEnumerable<AlunoDTO> getAll()
+        public IEnumerable<Aluno> getAll()
         {
-            throw new NotImplementedException();
+            return context.aluno;
         }
 
-        public void update(long id, Aluno aluno)
+        public void update(int id, Aluno aluno)
         {
-            throw new NotImplementedException();
+
+            context.Update(aluno);
+            context.SaveChanges();
         }
     }
 }

@@ -12,13 +12,13 @@ namespace projeto_escola.Service
     {
         public void add(Aluno aluno);
 
-        public IEnumerable<AlunoDTO> getAll();
+        public IEnumerable<Aluno> getAll();
 
-        public void delete(long id);
+        public void delete(int id);
 
-        public void update(long id, Aluno aluno);
+        public void update(int id, Aluno aluno);
 
-        public AlunoDTO find(long id);
+        public Aluno find(int id);
 
     }
 }

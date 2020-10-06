@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using projeto_escola.Context;
+using Microsoft.Extensions.Logging;
 using projeto_escola.DTO;
 using projeto_escola.Model;
-using projeto_escola.Repository;
 using projeto_escola.Service.Impl;
 
 namespace projeto_escola.Controllers
@@ -15,49 +12,62 @@ namespace projeto_escola.Controllers
     [ApiController]
     public class AlunoController : ControllerBase
     {
+        AlunoServiceImpl alunoService = new AlunoServiceImpl();
+        private readonly ILogger<AlunoController> logger;
+        private readonly IMapper mapper;
+        public AlunoController(ILogger<AlunoController> logger)
+        {
+            var configuration = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Aluno, AlunoDTO>();
+            });
+            mapper = configuration.CreateMapper();
 
-        // GET: api/<AlunoController>
+            this.logger = logger;
+        }
+
+        //GET: api/<AlunoController>
         [HttpGet("all")]
         public IEnumerable<Aluno> Get()
         {
-
-            List<Aluno> alunos = AlunoRepository.getAlunosList();
-            return alunos;
+            //var alunos = alunoService.getAll();
+            //var alunosDto = mapper.Map<AlunoDTO>(alunos);
+            return alunoService.getAll();
         }
 
         // GET api/<AlunoController>/5
         [HttpGet("{id}")]
         public AlunoDTO Get(int id)
         {
-            Aluno aluno = AlunoRepository.getAlunosList().Find(x => x.Id == id);
+            if (alunoService.find(id) == null)
+            {
+                logger.LogError("Não foi encontrado aluno com esse ID {0}", id);
+            }
 
-            AlunoDTO alunoDTO = new AlunoDTO(aluno);
-
-            return alunoDTO;
+            var aluno = alunoService.find(id);
+            var alunoDto = mapper.Map<AlunoDTO>(aluno);
+            return alunoDto;
         }
 
         // POST api/<AlunoController>
         [HttpPost]
         public void Post([FromBody] Aluno aluno)
         {
-            AlunoRepository.getAlunosList().Add(aluno);
+            alunoService.add(aluno);
         }
 
         // PUT api/<AlunoController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] Aluno aluno)
         {
-            Aluno alunoSelecionado = AlunoRepository.getAlunosList().Find(x => x.Id == id);
-            alunoSelecionado.Nome = aluno.Nome;
-            alunoSelecionado.Telefone = aluno.Telefone;
-            alunoSelecionado.Email = aluno.Email;
+            alunoService.update(id, aluno);
         }
 
         // DELETE api/<AlunoController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            AlunoRepository.getAlunosList().RemoveAt(id);
+            alunoService.delete(id);
         }
     }
 }

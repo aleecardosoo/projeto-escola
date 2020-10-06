@@ -3,6 +3,7 @@ using projeto_escola.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Threading.Tasks;
 
 namespace projeto_escola.Context
@@ -13,7 +14,8 @@ namespace projeto_escola.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("server=localhost;database=projeto_escola;user=root;password=root");
+            string conectionString = "server=localhost;database=projeto_escola;user=root;password=root";
+            optionsBuilder.UseMySQL(conectionString);
         }
     }
 }
